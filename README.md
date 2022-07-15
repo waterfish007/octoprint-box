@@ -210,6 +210,9 @@ camera_http_options=“”
 sudo vi /etc/systemd/system/webcam.service
 
 要注意，不要被吞字了。检查下开头。
+
+------------------
+
 [Unit]
 Description=Camera streamer for OctoPrint
 After=network-online.target OctoPrint.service
@@ -223,6 +226,7 @@ ExecStart=/home/pi/scripts/webcamDaemon
 [Install]
 WantedBy=multi-user.target
 
+--------------------------
 
 最后
 sudo systemctl daemon-reload
@@ -238,6 +242,7 @@ sudo vi /etc/haproxy/haproxy.cfg
 
 增加：
 
+--------------------
 
 
 frontend public
@@ -252,6 +257,8 @@ backend octoprint
 backend webcam
         http-request replace-path /webcam/(.*)   /\1
         server webcam1  127.0.0.1:8080
+        
+-----------------
 
 启动haproxy
 ~#/usr/sbin/haproxy -f /etc/haproxy/haproxy.cfg 
