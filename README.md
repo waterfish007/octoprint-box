@@ -92,7 +92,7 @@ function startRaspi {
     runMjpgStreamer "$MJPGSTREAMER_INPUT_RASPICAM $camera_raspi_options"
 }
 
-# starts up the USB webcam
+#starts up the USB webcam
 function startUsb {
     logger "Starting USB webcam"
     runMjpgStreamer "$MJPGSTREAMER_INPUT_USB $camera_usb_options"
