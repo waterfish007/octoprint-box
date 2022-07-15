@@ -67,7 +67,7 @@ MJPGSTREAMER_HOME=/home/pi/mjpg-streamer/mjpg-streamer-experimental
 MJPGSTREAMER_INPUT_USB="input_uvc.so"
 MJPGSTREAMER_INPUT_RASPICAM="input_raspicam.so"
 
-# init configuration
+#. init configuration
 camera="auto"
 camera_usb_options="-d /dev/video0 -r 1280x720 -f 10"
 camera_raspi_options="-fps 10"
@@ -76,7 +76,7 @@ if [ -e "/boot/octopi.txt" ]; then
     source "/boot/octopi.txt"
 fi
 
-# runs MJPG Streamer, using the provided input plugin + configuration
+#. runs MJPG Streamer, using the provided input plugin + configuration
 function runMjpgStreamer {
     input=$1
     pushd $MJPGSTREAMER_HOME
@@ -85,7 +85,7 @@ function runMjpgStreamer {
     popd
 }
 
-# starts up the RasPiCam
+#. starts up the RasPiCam
 function startRaspi {
     logger "Starting Raspberry Pi camera"
     runMjpgStreamer "$MJPGSTREAMER_INPUT_RASPICAM $camera_raspi_options"
@@ -101,12 +101,12 @@ function startUsb {
 # I have no idea why, but that's how it is...
 vcgencmd version
 
-# echo configuration
+#. echo configuration
 echo camera: $camera
 echo usb options: $camera_usb_options
 echo raspi options: $camera_raspi_options
 
-# keep mjpg streamer running if some camera is attached
+#. keep mjpg streamer running if some camera is attached
 while true; do
     if [ -e "/dev/video0" ] && { [ "$camera" = "auto" ] || [ "$camera" = "usb" ] ; }; then
         startUsb
@@ -130,70 +130,70 @@ chmod +x /home/pi/scripts/webcamDaemon
 
 ### Configure which camera to use
 #
-# Available options are:
-# - auto: tries first usb webcam, if that's not available tries raspi cam
-# - usb: only tries usb webcam
-# - raspi: only tries raspi cam
-#
-# Defaults to auto
-#
+#. Available options are:
+#. - auto: tries first usb webcam, if that's not available tries raspi cam
+#. - usb: only tries usb webcam
+#. - raspi: only tries raspi cam
+#.
+#. Defaults to auto
+#.
 camera="usb"
 
 ### Additional options to supply to MJPG Streamer for the USB camera
-#
-# See https://faq.octoprint.org/mjpg-streamer-config for available options
-#
-# Defaults to a resolution of 640x480 px and a framerate of 10 fps
+#.
+#. See https://faq.octoprint.org/mjpg-streamer-config for available options
+#.
+#. Defaults to a resolution of 640x480 px and a framerate of 10 fps
 #
 camera_usb_options="-d /dev/video0 -r 1280x720 -f 10"
 
 ### Additional webcam devices known to cause problems with -f
+#.
+#. Apparently there a some devices out there that with the current 
+#. mjpg_streamer release do not support the -f parameter (for specifying 
+#. the capturing framerate) and will just refuse to output an image if it 
+#. .is supplied.
+#.
+#. The webcam daemon will detect those devices by their USB Vendor and Product
+#. ID and remove the -f parameter from the options provided to mjpg_streamer.
 #
-# Apparently there a some devices out there that with the current 
-# mjpg_streamer release do not support the -f parameter (for specifying 
-# the capturing framerate) and will just refuse to output an image if it 
-# is supplied.
+#. .By default, this is done for the following devices:
+#.   Logitech C170 (046d:082b)
+#.   GEMBIRD (1908:2310)
+#.   Genius F100 (0458:708c)
+#.   Cubeternet GL-UPC822 UVC WebCam (1e4e:0102)
 #
-# The webcam daemon will detect those devices by their USB Vendor and Product
-# ID and remove the -f parameter from the options provided to mjpg_streamer.
-#
-# By default, this is done for the following devices:
-#   Logitech C170 (046d:082b)
-#   GEMBIRD (1908:2310)
-#   Genius F100 (0458:708c)
-#   Cubeternet GL-UPC822 UVC WebCam (1e4e:0102)
-#
-# Using the following option it is possible to add additional devices. If
-# your webcam happens to show above symptoms, try determining your cam's
-# vendor and product id via lsusb, activating the line below by removing # and 
-# adding it, e.g. for two broken cameras "aabb:ccdd" and "aabb:eeff"
-#
-#   additional_brokenfps_usb_devices=("aabb:ccdd" "aabb:eeff")
-#
-# If this fixes your problem, please report it back so we can include the device
-# out of the box: https://github.com/guysoft/OctoPi/issues
+#Using the following option it is possible to add additional devices. If
+#your webcam happens to show above symptoms, try determining your cam's
+#vendor and product id via lsusb, activating the line below by removing # and 
+#adding it, e.g. for two broken cameras "aabb:ccdd" and "aabb:eeff"
+#.
+#.   additional_brokenfps_usb_devices=("aabb:ccdd" "aabb:eeff")
+#.
+#If this fixes your problem, please report it back so we can include the device
+#out of the box: https://github.com/guysoft/OctoPi/issues
 #
 additional_brokenfps_usb_devices=(046d:082d)
 
 ### Additional options to supply to MJPG Streamer for the RasPi Cam
-#
-# See https://faq.octoprint.org/mjpg-streamer-config for available options
-#
-# Defaults to 10fps
-#
+#.
+#See https://faq.octoprint.org/mjpg-streamer-config for available options
+#.
+#.Defaults to 10fps
+#.
 #camera_raspi_options="-fps 10"
 
 ### Configuration of camera HTTP output
-#
-# Usually you should NOT need to change this at all! Only touch if you
-# know what you are doing and what the parameters mean.
-#
-# Below settings are used in the mjpg-streamer call like this:
-#
-#   -o "output_http.so -w $camera_http_webroot $camera_http_options"
-#
-# Current working directory is the mjpg-streamer base directory.
-#
+#.
+#. Usually you should NOT need to change this at all! Only touch if you
+#. .know what you are doing and what the parameters mean.
+#.
+#Below settings are used in the mjpg-streamer call like this:
+#.
+#,   -o "output_http.so -w $camera_http_webroot $camera_http_options"
+#.
+#Current working directory is the mjpg-streamer base directory.
+#.
 camera_http_webroot="./www"
 camera_http_options=“”
 
