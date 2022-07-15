@@ -61,6 +61,7 @@ vi创建在/home/pi/scripts目录下webcamDaemon文件，其实你直接把现�
 mkdir /home/pi/scripts
 sudo vi /home/pi/scripts/webcamDaemon
 要注意，不要被吞字了。检查下开头。
+-----------------------------------
 
 #!/bin/bash
 MJPGSTREAMER_HOME=/home/pi/mjpg-streamer/mjpg-streamer-experimental
@@ -97,8 +98,8 @@ function startUsb {
     runMjpgStreamer "$MJPGSTREAMER_INPUT_USB $camera_usb_options"
 }
 
-# we need this to prevent the later calls to vcgencmd from blocking
-# I have no idea why, but that's how it is...
+#we need this to prevent the later calls to vcgencmd from blocking
+#I have no idea why, but that's how it is...
 vcgencmd version
 
 #. echo configuration
@@ -116,13 +117,14 @@ while true; do
 
     sleep 120
 done
+--------------------
 
 chmod +x /home/pi/scripts/webcamDaemon
-－－－－－－－－－－
+
 
 在/boot目录下，vi创建octopi.txt
 要注意，不要被吞字了。检查下开头。
-
+-----------------------------------------------
 ### Do not use Notepad or WordPad.
 
 ### MacOSX users: If you use Textedit to edit this file make sure to use 
@@ -197,10 +199,12 @@ additional_brokenfps_usb_devices=(046d:082d)
 camera_http_webroot="./www"
 camera_http_options=“”
 
+-----------------------------------------------
 
-——————
 在/etc/systemd/system,vi创建webcam.service
+
 sudo vi /etc/systemd/system/webcam.service
+
 要注意，不要被吞字了。检查下开头。
 [Unit]
 Description=Camera streamer for OctoPrint
