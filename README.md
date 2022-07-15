@@ -61,6 +61,7 @@ vi创建在/home/pi/scripts目录下webcamDaemon文件，其实你直接把现�
 mkdir /home/pi/scripts
 sudo vi /home/pi/scripts/webcamDaemon
 要注意，不要被吞字了。检查下开头。
+
 -----------------------------------
 
 #!/bin/bash
