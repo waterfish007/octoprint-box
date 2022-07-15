@@ -117,6 +117,7 @@ while true; do
 
     sleep 120
 done
+
 --------------------
 
 chmod +x /home/pi/scripts/webcamDaemon
@@ -124,14 +125,16 @@ chmod +x /home/pi/scripts/webcamDaemon
 
 在/boot目录下，vi创建octopi.txt
 要注意，不要被吞字了。检查下开头。
+
 -----------------------------------------------
-### Do not use Notepad or WordPad.
 
-### MacOSX users: If you use Textedit to edit this file make sure to use 
-### "plain text format" and "disable smart quotes" in "Textedit > Preferences"
 
-### Configure which camera to use
-#
+###Do not use Notepad or WordPad.
+###MacOSX users: If you use Textedit to edit this file make sure to use 
+###"plain text format" and "disable smart quotes" in "Textedit > Preferences"
+
+###Configure which camera to use
+#.
 #. Available options are:
 #. - auto: tries first usb webcam, if that's not available tries raspi cam
 #. - usb: only tries usb webcam
@@ -141,7 +144,7 @@ chmod +x /home/pi/scripts/webcamDaemon
 #.
 camera="usb"
 
-### Additional options to supply to MJPG Streamer for the USB camera
+###Additional options to supply to MJPG Streamer for the USB camera
 #.
 #. See https://faq.octoprint.org/mjpg-streamer-config for available options
 #.
@@ -149,7 +152,7 @@ camera="usb"
 #
 camera_usb_options="-d /dev/video0 -r 1280x720 -f 10"
 
-### Additional webcam devices known to cause problems with -f
+###Additional webcam devices known to cause problems with -f
 #.
 #. Apparently there a some devices out there that with the current 
 #. mjpg_streamer release do not support the -f parameter (for specifying 
@@ -177,7 +180,7 @@ camera_usb_options="-d /dev/video0 -r 1280x720 -f 10"
 #
 additional_brokenfps_usb_devices=(046d:082d)
 
-### Additional options to supply to MJPG Streamer for the RasPi Cam
+###Additional options to supply to MJPG Streamer for the RasPi Cam
 #.
 #See https://faq.octoprint.org/mjpg-streamer-config for available options
 #.
@@ -185,7 +188,7 @@ additional_brokenfps_usb_devices=(046d:082d)
 #.
 #camera_raspi_options="-fps 10"
 
-### Configuration of camera HTTP output
+###Configuration of camera HTTP output
 #.
 #. Usually you should NOT need to change this at all! Only touch if you
 #. .know what you are doing and what the parameters mean.
