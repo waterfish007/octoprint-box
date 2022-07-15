@@ -276,3 +276,8 @@ Path to FFMPEG: /usr/bin/ffmpeg
 资料来源：
 https://community.octoprint.org/t/setting-up-octoprint-on-a-raspberry-pi-running-raspberry-pi-os-debian/2337
 https://3dprintscape.com/install-octoprint-on-linux/
+
+
+打USB转串口驱动：
+复制ch341.ko到/lib/modules/#uname -r/目录，然后sudo insmod ch341.ko
+
