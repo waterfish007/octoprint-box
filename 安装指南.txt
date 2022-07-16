@@ -6,13 +6,14 @@ sudo apt update
 sudo adduser pi
 sudo adduser pi sudo
 sudo visudo
-增加pi ALL=(ALL) NOPASSWD:ALL
-
+修改增加pi ALL=(ALL) NOPASSWD:ALL
+添加PI用户的权限
 sudo usermod -a -G tty pi 
 sudo usermod -a -G dialout pi
-sudo usermod -a -G video pi
-
+sudo usermod -a -G video pi
+切换到PI账号操作，下次TTY登录记得用PI
 sudo su pi
+开工
 cd~
 sudo apt install python3-pip python3-dev python3-setuptools python3-venv git libyaml-dev build-essential
 mkdir OctoPrint && cd OctoPrint
@@ -20,18 +21,16 @@ python3 -m venv venv
 source venv/bin/activate
 pip install pip --upgrade
 pip install octoprint
-如果有报错，就再安装一次。
+第一次安装如果有报错，就再执行pip install octoprint安装一次，我第二次就成功了，第二次安装快很多的。
 octoprint serve
 这里访问IP:5000就出来了。不过后面我们会改到8111，方便统一打通摄像头端口。特别外网访问回家监控的时候就知道好处了。
 
-
-
-octoprint自动启动脚本
+安装octoprint自动启动脚本
 wget https://github.com/OctoPrint/OctoPrint/raw/master/scripts/octoprint.service && sudo mv octoprint.service /etc/systemd/system/octoprint.service
 
 sudo systemctl enable octoprint.service.
 
-Webcam安装:
+摄像头环境mjpe-streamer安装:
 cd ~
 sudo apt install subversion libjpeg62-turbo-dev imagemagick ffmpeg libv4l-dev cmake
 git clone https://github.com/jacksonliam/mjpg-streamer.git
@@ -41,15 +40,18 @@ make
 
 报错，缺个cmake，综合教程和实际报错，先打上
 sudo apt-get install subversion libjpeg8-dev imagemagick libv4l-dev cmake
-再make
+make
 测试：
 ./mjpg_streamer -i "./input_uvc.so" -o “./output_http.so"
 会显示能操作。
 
+给摄像头配置自动运行和配置
 vi创建在/home/pi/scripts目录下webcamDaemon文件，其实你直接把现成的文件拉到对应目录也行。
 mkdir /home/pi/scripts
 sudo vi /home/pi/scripts/webcamDaemon
 要注意，不要被吞字了。检查下开头。
+-------------------------------------
+
 
 #!/bin/bash
 MJPGSTREAMER_HOME=/home/pi/mjpg-streamer/mjpg-streamer-experimental
@@ -106,11 +108,16 @@ while true; do
     sleep 120
 done
 
-chmod +x /home/pi/scripts/webcamDaemon
-－－－－－－－－－－
 
-在/boot目录下，vi创建octopi.txt
+---------------------------------
+加执行权限
+chmod +x /home/pi/scripts/webcamDaemon
+
+
+摄像头参数配置，在/boot目录下，vi创建octopi.txt
 要注意，不要被吞字了。检查下开头。
+---------------------------------
+
 
 ### Do not use Notepad or WordPad.
 
@@ -186,11 +193,13 @@ additional_brokenfps_usb_devices=(046d:082d)
 camera_http_webroot="./www"
 camera_http_options=“”
 
+-------------------------------
 
-——————
 在/etc/systemd/system,vi创建webcam.service
 sudo vi /etc/systemd/system/webcam.service
 要注意，不要被吞字了。检查下开头。
+-----------------------
+
 [Unit]
 Description=Camera streamer for OctoPrint
 After=network-online.target OctoPrint.service
@@ -204,21 +213,23 @@ ExecStart=/home/pi/scripts/webcamDaemon
 [Install]
 WantedBy=multi-user.target
 
-
-最后
+------------------------------
+开放摄像头的权限
+sudo chmod +x /dev/video0
+最后增加开机启动
 sudo systemctl daemon-reload
 sudo systemctl enable webcam.service
-———-
 
-安装Haproxy
+
+安装Haproxy做端口转发
 
 
 sudo apt-get install haproxy
 
 sudo vi /etc/haproxy/haproxy.cfg
 
-增加：
-
+末尾增加：
+--------------------
 
 
 frontend public
@@ -234,20 +245,20 @@ backend webcam
         http-request replace-path /webcam/(.*)   /\1
         server webcam1  127.0.0.1:8080
 
+-------------------------
 启动haproxy
-~#/usr/sbin/haproxy -f /etc/haproxy/haproxy.cfg 
+sudo /usr/sbin/haproxy -f /etc/haproxy/haproxy.cfg 
+
+增加开机启动
+sudo systemctl daemon-reload
+sudo systemctl enable haproxy.service
+sudo systemctl start haproxy.service
 
 
-systemctl daemon-reload
-systemctl enable haproxy.service
-systemctl start haproxy.service
 
 
 
-重启前，还有一个，开放摄像头的权限
-sudo chmod +x /dev/video0
-
-最后
+最后，改Hostname,
 sudo hostnamectl set-hostname octopi
 sudo reboot
 
